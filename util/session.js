@@ -7,7 +7,7 @@ function initSession() {
         saveUninitialized: true,
         rolling: true,
         cookie: {
-            maxAge: 1000 * 60,
+            maxAge: 1000000 * 60,
             secure: false,
         }
     })

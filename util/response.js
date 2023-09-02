@@ -10,7 +10,7 @@ function response(data, res, code) {
         case '01':
             res.send({
                 code: '01',
-                msg: 'error'
+                msg: data,
             })
             break;
         default:
