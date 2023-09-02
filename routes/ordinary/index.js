@@ -19,7 +19,6 @@ router.post('/login', [
 
     conn.query(sql, function (err, result) {
         if (err) { console.log(err); }
-        console.log(result)
         if (!result?.length) {
             response('账号或密码错误', res, '01')
         } else {

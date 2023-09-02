@@ -7,7 +7,6 @@ const admin = require("./admin")
 
 // 登录校验
 router.use('/', (req, res, next) => {
-    console.log(req.session.user)
     if (req.session.user) {
         next()
     } else {
