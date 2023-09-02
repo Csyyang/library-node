@@ -8,6 +8,8 @@ router.get('/', function (req, res, next) {
 
 
 router.post('/login', (req, res,) => {
+  const sql = "SELECT * FROM users WHERE username = '提供的用户名' AND password_hash = SHA2('提供的密码', 256);"
+
   res.send()
 })
 
