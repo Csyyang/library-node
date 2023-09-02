@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const conn = require('../mysql/index')
+const book = require('./book')
 
-router.get('/test', function (req, res, next) {
-    res.end('ok')
-});
+// 书籍管理
+router.use('/',book)
 
 module.exports = router
