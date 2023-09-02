@@ -5,6 +5,7 @@ function initSession() {
         secret: 'scret20230902',
         resave: false,
         saveUninitialized: true,
+        rolling: true,
         cookie: {
             maxAge: 1000 * 60,
             secure: false,

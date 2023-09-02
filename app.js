@@ -6,6 +6,7 @@ const initSession = require('./util/session')
 
 // 路由
 const ordinary = require('./routes/ordinary')
+const verify = require('./routes/verify')
 const test = require('./routes/test');
 
 var app = express();
@@ -21,14 +22,8 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/ordinary', ordinary)
 
 // 需要登录
+app.use('/verify', verify)
 
-
-
-// 超级管理路由
-
-// 管理员路由
-
-// 普通路由
 app.use('/test', test)
 
 module.exports = app;
