@@ -7,7 +7,7 @@ const initSession = require('./util/session')
 // 路由
 const ordinary = require('./routes/ordinary')
 const verify = require('./routes/verify')
-const test = require('./routes/test');
+
 
 var app = express();
 
@@ -24,6 +24,5 @@ app.use('/ordinary', ordinary)
 // 需要登录
 app.use('/verify', verify)
 
-app.use('/test', test)
 
 module.exports = app;

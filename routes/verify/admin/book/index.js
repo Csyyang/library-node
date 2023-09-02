@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const conn = require('../mysql/index');
+const conn = require('../../../../mysql/index');
 const { body, validationResult } = require('express-validator');
-const response = require("../util/response");
+const response = require("../../../../util/response");
 
 // 图书新增
 router.post('/addBook', [

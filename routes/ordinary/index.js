@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const conn = require('../mysql/index');
+const conn = require('../../mysql/index');
 const { body, validationResult } = require('express-validator');
-const response = require("../util/response");
+const response = require("../../util/response");
 
-
+// 登录
 router.post('/login', [
     // 使用express-validator中间件来验证参数
     body('username').notEmpty().withMessage('账号不能为空'),
