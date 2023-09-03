@@ -18,7 +18,7 @@ router.post('/addBook', [
     // 参数校验
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return response(errors.array(), res, 400)
+        return response(errors.array(), res, '01')
     }
 
     const body = req.body
@@ -117,7 +117,7 @@ router.get('/allBook', [
     }
 
     try {
-        const sql = `SELECT * FROM Book LIMIT ${req.query.size} OFFSET ${req.query.page - 1};`
+        const sql = `SELECT *, DATE_FORMAT(publish_date, '%Y-%m-%d') AS publish_date FROM Book LIMIT ${req.query.size} OFFSET ${req.query.page - 1};`
         const sqlList = await queryAsync(sql)
 
         resObj.list = sqlList
