@@ -18,13 +18,16 @@ router.post('/login', [
     const sql = `SELECT * FROM admin WHERE username = '${req.body.username}' AND password = '${req.body.password}';`
 
     conn.query(sql, function (err, result) {
-        if (err) { console.log(err); }
+        if (err) {
+            console.log(err);
+            return response(err, res, '01')
+        }
         if (!result?.length) {
             response('账号或密码错误', res, '01')
         } else {
             const user = result[0]
             req.session.user = user
-            response({}, res)
+            response(user, res)
         }
     })
 
