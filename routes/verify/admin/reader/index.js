@@ -20,7 +20,7 @@ router.post('/addReader', [
     }
 
     const body = req.body
-    const sql = `INSERT INTO book (name, email, phone, address, join_date ) VALUES ('${body.name}', '${body.email}', '${body.phone}', '${body.address}', '${body.join_date}')`;
+    const sql = `INSERT INTO reader (name, email, phone, address, join_date ) VALUES ('${body.name}', '${body.email}', '${body.phone}', '${body.address}', '${body.join_date}')`;
 
     conn.query(sql, function (err, result) {
         if (err) {
@@ -112,7 +112,7 @@ router.get('/allReader', [
     }
 
     try {
-        const sql = `SELECT * FROM render LIMIT ${req.query.size} OFFSET ${req.query.page - 1};`
+        const sql = `SELECT *,DATE_FORMAT(join_date, '%Y-%m-%d') AS join_date FROM reader LIMIT ${req.query.size} OFFSET ${req.query.page - 1};`
         const sqlList = await queryAsync(sql)
 
         resObj.list = sqlList
