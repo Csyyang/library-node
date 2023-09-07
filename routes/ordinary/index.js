@@ -67,7 +67,7 @@ router.post('/register', [
 
 
     try {
-        await conn.query(insertSql, [body.first_name, body.last_name, body.email, body.username, body.password_hash, body.is_admin])
+        await conn.query(insertSql, [body.first_name, body.last_name, body.email, body.username, body.password_hash, body.is_admin || 0])
         response('注册成功', res)
     } catch (error) {
         console.log(error);
