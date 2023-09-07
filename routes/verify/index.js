@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const conn = require('../../mysql/index')
+const conn = require('../../mysql/promiseSql')
 const response = require("../../util/response");
 const suadmin = require("./suadmin")
 const admin = require("./admin")

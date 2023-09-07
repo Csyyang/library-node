@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const conn = require('../../../../mysql/index');
+const conn = require('../../../../mysql/promiseSql');
 const queryAsync = require('../../../../mysql/queryAsync');
 const { body, query, validationResult } = require('express-validator');
 const response = require("../../../../util/response");
