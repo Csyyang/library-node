@@ -6,7 +6,7 @@ const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
     password: 'root',
-    database: 'library2',
+    database: 'library',
     connectionLimit: 10, // 连接池中的最大连接数
 });
 

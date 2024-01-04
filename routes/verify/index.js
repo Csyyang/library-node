@@ -4,6 +4,7 @@ const conn = require('../../mysql/promiseSql')
 const response = require("../../util/response");
 const suadmin = require("./suadmin")
 const admin = require("./admin")
+const normal = require('./normal')
 
 // 登录校验
 router.use('/', (req, res, next) => {
@@ -16,17 +17,7 @@ router.use('/', (req, res, next) => {
 
 
 // 普通路由
-// 登出
-router.get('/logout', function (req, res, next) {
-    req.session.destroy((err) => {
-        if (err) {
-            console.error(err);
-            res.end(err)
-        } else {
-            response({}, res)
-        }
-    });
-});
+router.use('/', normal)
 
 // 超级管理路由
 router.use('/suadmin', suadmin)
