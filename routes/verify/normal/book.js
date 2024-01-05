@@ -78,7 +78,7 @@ router.post('/borrowing', [
         // 获取锁并检查库存是否大于0
         const [rows] = await connection.query(`SELECT remaining FROM book_inventory WHERE book_id = ${body.book_id}  FOR UPDATE`);
 
-        if(rows.length === 0) {
+        if (rows.length === 0) {
             await connection.rollback();
             throw new Error('未找到图书');
         }
@@ -114,8 +114,32 @@ router.post('/borrowing', [
     }
 });
 
-// 借书确认
+// 发起图书归还
+router.post('/returnApply', [
+    body('record_id').notEmpty().withMessage('参数异常')
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return response(errors.array(), res, '01')
+    }
 
-// 归还确认
 
+    const sql = `UPDATE borrow_records SET status = 'returnedQ' WHERE record_id = ?;`
+
+
+    try {
+        const [result] = await conn.query(sql, [req.body.record_id])
+        console.log(result.affectedRows)
+
+        if(result.affectedRows > 0) {
+            response('发起成功', res)
+        } else {
+            response('参数异常', res, '01')
+        }
+    } catch (err) {
+        console.log(err);
+        response(err, res, '01')
+        return
+    }
+})
 module.exports = router

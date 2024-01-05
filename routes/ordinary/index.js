@@ -61,6 +61,7 @@ router.post('/AdmLogin', [
             const user = result[0]
             console.log(user)
             req.session.user = user
+            req.session.user.isAdmin = true
             response(user, res)
         }
     } catch (error) {
