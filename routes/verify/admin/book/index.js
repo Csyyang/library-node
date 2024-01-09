@@ -3,7 +3,8 @@ const router = express.Router();
 const conn = require('../../../../mysql/promiseSql')
 const { body, query, validationResult } = require('express-validator');
 const response = require("../../../../util/response");
-
+const multer = require('multer');
+const exceljs = require('exceljs');
 // 图书新增
 // router.post('/addBook', [
 //     body('title').notEmpty().withMessage('图书名称不能为空'),
@@ -247,7 +248,7 @@ router.post('/returnConfirm', [
             `UPDATE book_inventory SET lend = lend - 1,remaining = quantity - lend  WHERE book_id =  ${body.book_id}`
         );
 
-        if(inventory.affectedRows === 0) {
+        if (inventory.affectedRows === 0) {
             await connection.rollback();
             throw new Error('update book_inventory fail')
         }
@@ -266,5 +267,76 @@ router.post('/returnConfirm', [
         connection.release();
     }
 })
+
+
+
+
+
+// 设置 Multer 中间件，用于处理上传的文件
+const storage = multer.memoryStorage(); // 保存文件到内存
+const upload = multer({ storage: storage });
+
+// 图书批量入库
+router.post('/warehousing', upload.single('excelFile'), async (req, res) => {
+    // 获取excl数据转json
+    // 遍历每条json
+    // 判断是否已近包含
+    // 1. 包含直接查找相关库存库并增加
+    // 2. 未包含判断是否有类别，创建类型别，创建库存行。
+    try {
+        // 从内存中读取上传的Excel文件
+        const excelBuffer = req.file.buffer;
+
+        // 使用 ExcelJS 解析 Excel 文件
+        const workbook = new exceljs.Workbook();
+        workbook.xlsx.load(excelBuffer).then(async () => {
+            const result = [];
+
+            // 遍历每个工作表
+            workbook.eachSheet(sheet => {
+                const sheetData = [];
+                // 遍历每行数据
+                sheet.eachRow(row => {
+                    const rowData = [];
+                    // 遍历每个单元格
+                    row.eachCell(cell => {
+                        rowData.push(cell.value);
+                    });
+                    sheetData.push(rowData);
+                });
+                result.push({ sheetName: sheet.name, data: sheetData.slice(1) });
+            });
+            const connection = await conn.getConnection();
+            try {
+                for (let item of result[0].data) {
+                    const sql = `SELECT * FROM books WHERE isbn = ?`
+                    const [result] = await conn.query(sql, [item[0]])
+                    // response(result, res)
+
+                    if (result.length > 0) {
+                        await conn.query(`UPDATE book_inventory SET quantity = quantity + ?,remaining = remaining + ?  WHERE book_id = ?;`, [item[5], item[5], result[0].book_id])
+
+                    }
+                }
+
+                return response('更新成功', res)
+
+            } catch (err) {
+                console.log('error')
+                console.log(error)
+                // 出现错误时回滚事务
+                await connection.rollback();
+                response(error.toString(), res, '01')
+            } finally {
+                // 释放连接
+                connection.release();
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+})
+
 
 module.exports = router
