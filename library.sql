@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主机： localhost
--- 生成日期： 2023-09-03 21:50:01
--- 服务器版本： 5.7.26
--- PHP 版本： 7.3.4
+-- 生成日期： 2024-01-11 09:31:45
+-- 服务器版本： 5.7.28
+-- PHP 版本： 7.3.11
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -25,182 +25,220 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- 表的结构 `admin`
+-- 表的结构 `administrators`
 --
 
-CREATE TABLE `admin` (
+CREATE TABLE `administrators` (
   `admin_id` int(11) NOT NULL,
-  `username` varchar(255) NOT NULL DEFAULT '',
-  `name` varchar(255) NOT NULL DEFAULT '',
-  `password` varchar(255) NOT NULL DEFAULT '',
-  `role` varchar(255) DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `username` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8_unicode_ci NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
--- 转存表中的数据 `admin`
+-- 转存表中的数据 `administrators`
 --
 
-INSERT INTO `admin` (`admin_id`, `username`, `name`, `password`, `role`) VALUES
-(1, 'root', '超级管理员', 'root', '0'),
-(2, 'user1', '用户1', 'user1111', '2');
+INSERT INTO `administrators` (`admin_id`, `username`, `password`) VALUES
+(1, 'root', 'root');
 
 -- --------------------------------------------------------
 
 --
--- 表的结构 `book`
+-- 表的结构 `books`
 --
 
-CREATE TABLE `book` (
+CREATE TABLE `books` (
   `book_id` int(11) NOT NULL,
-  `title` varchar(255) NOT NULL DEFAULT '',
-  `author` varchar(255) NOT NULL DEFAULT '',
-  `publisher` varchar(255) NOT NULL DEFAULT '0',
-  `publish_date` date DEFAULT NULL,
-  `ISBN` varchar(20) NOT NULL DEFAULT '',
-  `category` varchar(255) NOT NULL DEFAULT '0',
-  `description` text,
-  `status` varchar(20) NOT NULL DEFAULT '在库'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `author` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `publisher` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `isbn` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+  `category_id` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
--- 转存表中的数据 `book`
+-- 转存表中的数据 `books`
 --
 
-INSERT INTO `book` (`book_id`, `title`, `author`, `publisher`, `publish_date`, `ISBN`, `category`, `description`, `status`) VALUES
-(4, 'title', 'author', 'publisher', '2011-12-01', 'ISBN121221', 'category1', 'description12121212', '在库'),
-(5, '巨人大大的', '王sir', '大地旅行', '2023-09-05', '32132132323', '旅游', '哈哈哈哈哈这时描述', '在库'),
-(6, '书籍2022', '作者', '出版社', '2023-09-06', '32132322213', '图书分类', '书籍描述', '在库');
+INSERT INTO `books` (`book_id`, `title`, `author`, `publisher`, `isbn`, `category_id`) VALUES
+(1, '格林童话', '安徒生', '安徒生出版社', '1112221111', 1),
+(2, '福尔摩斯探案', '华生', '福尔摩斯出版社', '2222222', 2);
 
 -- --------------------------------------------------------
 
 --
--- 表的结构 `borrowing`
+-- 表的结构 `book_categories`
 --
 
-CREATE TABLE `borrowing` (
-  `borrowing_id` int(11) NOT NULL,
-  `reader_id` int(11) DEFAULT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `book_id` int(11) DEFAULT NULL,
-  `title` varchar(255) NOT NULL,
-  `borrow_date` date DEFAULT NULL,
-  `return_date` date DEFAULT NULL,
-  `status` varchar(20) DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `category`
---
-
-CREATE TABLE `category` (
+CREATE TABLE `book_categories` (
   `category_id` int(11) NOT NULL,
-  `name` varchar(255) DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `category_name` varchar(255) COLLATE utf8_unicode_ci NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- 转存表中的数据 `book_categories`
+--
+
+INSERT INTO `book_categories` (`category_id`, `category_name`) VALUES
+(1, '童话'),
+(2, '探案'),
+(3, '言情'),
+(4, '悬疑'),
+(5, '文学');
 
 -- --------------------------------------------------------
 
 --
--- 表的结构 `publisher`
+-- 表的结构 `book_inventory`
 --
 
-CREATE TABLE `publisher` (
-  `publisher_id` int(11) NOT NULL,
-  `name` varchar(255) DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+CREATE TABLE `book_inventory` (
+  `inventory_id` int(11) NOT NULL,
+  `book_id` int(11) DEFAULT NULL,
+  `quantity` int(11) NOT NULL COMMENT '总数',
+  `lend` int(11) NOT NULL COMMENT '借出',
+  `remaining` int(11) NOT NULL COMMENT '剩余'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- 转存表中的数据 `book_inventory`
+--
+
+INSERT INTO `book_inventory` (`inventory_id`, `book_id`, `quantity`, `lend`, `remaining`) VALUES
+(1, 1, 2000, 0, 2000),
+(2, 2, 4002, 2, 4000);
 
 -- --------------------------------------------------------
 
 --
--- 表的结构 `reader`
+-- 表的结构 `borrow_records`
 --
 
-CREATE TABLE `reader` (
+CREATE TABLE `borrow_records` (
+  `record_id` int(11) NOT NULL,
+  `reader_id` int(11) DEFAULT NULL,
+  `book_id` int(11) DEFAULT NULL,
+  `borrow_date` date NOT NULL,
+  `return_date` date NOT NULL,
+  `status` enum('borrowed','returned','borrowedQ','returnedQ') COLLATE utf8_unicode_ci DEFAULT 'borrowedQ'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- 转存表中的数据 `borrow_records`
+--
+
+INSERT INTO `borrow_records` (`record_id`, `reader_id`, `book_id`, `borrow_date`, `return_date`, `status`) VALUES
+(4, 1, 1, '2024-11-14', '2024-11-15', 'returned'),
+(5, 1, 1, '2024-11-14', '2024-11-15', 'returned');
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `readers`
+--
+
+CREATE TABLE `readers` (
   `reader_id` int(11) NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `phone` varchar(20) DEFAULT NULL,
-  `address` varchar(255) DEFAULT NULL,
-  `join_date` date DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `id_card_number` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `contact_number` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
+  `status` enum('normal','frozen') COLLATE utf8_unicode_ci DEFAULT 'normal',
+  `isDelete` enum('0','1') COLLATE utf8_unicode_ci DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
--- 转存表中的数据 `reader`
+-- 转存表中的数据 `readers`
 --
 
-INSERT INTO `reader` (`reader_id`, `name`, `email`, `phone`, `address`, `join_date`) VALUES
-(2, '李四', '45656@qq.com', '17625485448', '山东威海', '2023-09-04'),
-(3, '王二', '66456456@qq.com', '1251515115', 'a发发到付达到发电房', '2023-08-29');
+INSERT INTO `readers` (`reader_id`, `name`, `id_card_number`, `password`, `contact_number`, `status`, `isDelete`) VALUES
+(1, '王八嘎', '111111', '111111', '17628144554', 'normal', '0');
 
 --
 -- 转储表的索引
 --
 
 --
--- 表的索引 `admin`
+-- 表的索引 `administrators`
 --
-ALTER TABLE `admin`
+ALTER TABLE `administrators`
   ADD PRIMARY KEY (`admin_id`),
   ADD UNIQUE KEY `username` (`username`);
 
 --
--- 表的索引 `book`
+-- 表的索引 `books`
 --
-ALTER TABLE `book`
+ALTER TABLE `books`
   ADD PRIMARY KEY (`book_id`),
-  ADD KEY `publisher_id` (`publisher`),
-  ADD KEY `category_id` (`category`);
+  ADD KEY `category_id` (`category_id`);
 
 --
--- 表的索引 `borrowing`
+-- 表的索引 `book_categories`
 --
-ALTER TABLE `borrowing`
-  ADD PRIMARY KEY (`borrowing_id`),
-  ADD UNIQUE KEY `name` (`name`) USING BTREE,
+ALTER TABLE `book_categories`
+  ADD PRIMARY KEY (`category_id`);
+
+--
+-- 表的索引 `book_inventory`
+--
+ALTER TABLE `book_inventory`
+  ADD PRIMARY KEY (`inventory_id`),
+  ADD KEY `book_id` (`book_id`);
+
+--
+-- 表的索引 `borrow_records`
+--
+ALTER TABLE `borrow_records`
+  ADD PRIMARY KEY (`record_id`),
   ADD KEY `reader_id` (`reader_id`),
   ADD KEY `book_id` (`book_id`);
 
 --
--- 表的索引 `category`
+-- 表的索引 `readers`
 --
-ALTER TABLE `category`
-  ADD PRIMARY KEY (`category_id`);
-
---
--- 表的索引 `publisher`
---
-ALTER TABLE `publisher`
-  ADD PRIMARY KEY (`publisher_id`);
-
---
--- 表的索引 `reader`
---
-ALTER TABLE `reader`
-  ADD PRIMARY KEY (`reader_id`),
-  ADD KEY `name` (`name`);
+ALTER TABLE `readers`
+  ADD PRIMARY KEY (`reader_id`) USING BTREE,
+  ADD UNIQUE KEY `id_card_number` (`id_card_number`);
 
 --
 -- 在导出的表使用AUTO_INCREMENT
 --
 
 --
--- 使用表AUTO_INCREMENT `admin`
+-- 使用表AUTO_INCREMENT `administrators`
 --
-ALTER TABLE `admin`
-  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+ALTER TABLE `administrators`
+  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- 使用表AUTO_INCREMENT `book`
+-- 使用表AUTO_INCREMENT `books`
 --
-ALTER TABLE `book`
-  MODIFY `book_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+ALTER TABLE `books`
+  MODIFY `book_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- 使用表AUTO_INCREMENT `reader`
+-- 使用表AUTO_INCREMENT `book_categories`
 --
-ALTER TABLE `reader`
-  MODIFY `reader_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+ALTER TABLE `book_categories`
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- 使用表AUTO_INCREMENT `book_inventory`
+--
+ALTER TABLE `book_inventory`
+  MODIFY `inventory_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- 使用表AUTO_INCREMENT `borrow_records`
+--
+ALTER TABLE `borrow_records`
+  MODIFY `record_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- 使用表AUTO_INCREMENT `readers`
+--
+ALTER TABLE `readers`
+  MODIFY `reader_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
